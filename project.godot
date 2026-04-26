@@ -1,0 +1,31 @@
+; Engine configuration file.
+; It's best edited using the editor UI and not directly,
+; since the parameters that go here are not all obvious.
+;
+; Format:
+;   [section] ; section goes between []
+;   param=value ; assign values to parameters
+
+config_version=5
+
+[application]
+
+config/name="CatSimTest"
+run/main_scene="uid://cxdnqb323pkm2"
+config/features=PackedStringArray("4.6", "Forward Plus")
+config/icon="res://icon.svg"
+
+[autoload]
+
+RumorManager="*uid://yqkvueap0yku"
+TimeManager="*uid://8sp72femyve0"
+GameState="*uid://biqcvrk4pmavp"
+ZodiacSystem="*uid://bb4nbig0x8mlu"
+
+[physics]
+
+3d/physics_engine="Jolt Physics"
+
+[rendering]
+
+rendering_device/driver.windows="d3d12"

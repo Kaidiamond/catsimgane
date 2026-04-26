@@ -1,0 +1,57 @@
+[gd_scene format=3 uid="uid://cxdnqb323pkm2"]
+
+[ext_resource type="PackedScene" uid="uid://bxbcf6xtv8rf3" path="res://Scenes/locations/location_base.tscn" id="1_ci0hl"]
+[ext_resource type="Script" uid="uid://dkpc1wtn5acvk" path="res://Scripts/locations/test_location.gd" id="2_sh0re"]
+[ext_resource type="Script" uid="uid://dlsq6u0wj5w20" path="res://Scenes/locations/test_cat.gd" id="3_sh0re"]
+
+[sub_resource type="NavigationMesh" id="NavigationMesh_v8rot"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_6h3w5"]
+radius = 0.3
+height = 1.0
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_2sqo4"]
+radius = 0.3
+height = 1.0
+
+[node name="Fog_Pier" unique_id=1939461657 instance=ExtResource("1_ci0hl")]
+script = ExtResource("2_sh0re")
+day_tick_interval = 10.0
+
+[node name="NavRegion" parent="." index="8"]
+navigation_mesh = SubResource("NavigationMesh_v8rot")
+
+[node name="DialogueBubbleContainer" parent="UILayer" index="0"]
+layout_mode = 3
+anchors_preset = 15
+
+[node name="LocationLabel" parent="UILayer" index="1"]
+anchors_preset = 5
+
+[node name="Mochi" type="CharacterBody3D" parent="." index="12" unique_id=1444085006 groups=["cat"]]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3, 0.1, 0)
+script = ExtResource("3_sh0re")
+cat_name = "Mochi"
+start_mood = 0.5
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Mochi" index="0" unique_id=1449118999]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+shape = SubResource("CapsuleShape3D_6h3w5")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Mochi" index="1" unique_id=385793746]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+mesh = SubResource("CapsuleMesh_2sqo4")
+
+[node name="Mittens" type="CharacterBody3D" parent="." index="13" unique_id=422061448 groups=["cat"]]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3, 0.1, 0)
+script = ExtResource("3_sh0re")
+cat_name = "Mittens"
+start_mood = 0.5
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Mittens" index="0" unique_id=368287417]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+shape = SubResource("CapsuleShape3D_6h3w5")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Mittens" index="1" unique_id=2004498146]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+mesh = SubResource("CapsuleMesh_2sqo4")

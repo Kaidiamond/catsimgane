@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="CatData" format=3 uid="uid://3mrkuwpuclph"]
+
+[ext_resource type="Script" uid="uid://bdk66lvuyg60o" path="res://Resources/cats/cat_data.gd" id="1_6s3cq"]
+
+[resource]
+script = ExtResource("1_6s3cq")
+cat_name = "mochi"
+display_name = "Mochi"
+zodiac_sign = "scorpio"
+aspiration_type = "love"
+metadata/_custom_type_script = "uid://bdk66lvuyg60o"

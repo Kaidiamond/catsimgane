@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="CatData" format=3 uid="uid://i2jx6w8or2pm"]
+
+[ext_resource type="Script" uid="uid://bdk66lvuyg60o" path="res://Resources/cats/cat_data.gd" id="1_cuhuj"]
+
+[resource]
+script = ExtResource("1_cuhuj")
+cat_name = "biscuit"
+display_name = "Biscuit"
+zodiac_sign = "pisces"
+aspiration_type = "love"
+metadata/_custom_type_script = "uid://bdk66lvuyg60o"

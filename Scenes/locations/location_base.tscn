@@ -1,0 +1,148 @@
+[gd_scene format=3 uid="uid://cxdnqb323pkm2"]
+
+[ext_resource type="Script" uid="uid://cgxpxv3133nd" path="res://Scripts/locations/location_base.gd" id="1_f1ffd"]
+[ext_resource type="Script" uid="uid://b0rbcr1f7sdap" path="res://Scripts/cat_base.gd" id="2_brhhl"]
+[ext_resource type="Resource" uid="uid://3mrkuwpuclph" path="res://Resources/cats/mochi.tres" id="3_pq6w6"]
+[ext_resource type="Resource" uid="uid://i2jx6w8or2pm" path="res://Resources/cats/biscuit.tres" id="4_bvkpq"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_ud07r"]
+size = Vector3(20, 0.2, 20)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_brhhl"]
+size = Vector3(20, 0.2, 20)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_pq6w6"]
+size = Vector3(20, 0.5, 20)
+
+[sub_resource type="NavigationMesh" id="NavigationMesh_bvkpq"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_ud07r"]
+size = Vector3(20, 3, 0.3)
+
+[sub_resource type="BoxMesh" id="BoxMesh_brhhl"]
+size = Vector3(20, 3, 0.3)
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_ud07r"]
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_brhhl"]
+
+[node name="LocationBase" type="Node3D" unique_id=1869630581]
+script = ExtResource("1_f1ffd")
+test_mode = true
+
+[node name="Camera3D" type="Camera3D" parent="." unique_id=663072975]
+transform = Transform3D(1, 0, 0, 0, 0.64278764, 0.76604444, 0, -0.76604444, 0.64278764, 0, 14, 12)
+current = true
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=621444497]
+transform = Transform3D(0.61237246, 0.3535534, -0.7071068, -0.50000006, 0.8660254, 0, 0.61237246, 0.3535534, 0.7071068, 0, 0, 0)
+
+[node name="Floor" type="StaticBody3D" parent="." unique_id=1705327553]
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Floor" unique_id=2134754722]
+mesh = SubResource("BoxMesh_ud07r")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Floor" unique_id=1966544497]
+shape = SubResource("BoxShape3D_brhhl")
+
+[node name="SpawnPoints" type="Node3D" parent="." unique_id=1560933114]
+
+[node name="SpawnA" type="Marker3D" parent="SpawnPoints" unique_id=1221479555]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3, 0.1, 3)
+
+[node name="SpawnB" type="Marker3D" parent="SpawnPoints" unique_id=352576410]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 0.1, 3)
+
+[node name="SpawnC" type="Marker3D" parent="SpawnPoints" unique_id=556578210]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, -3)
+
+[node name="InteractionZones" type="Node3D" parent="." unique_id=1111215738]
+
+[node name="ZoneCentre" type="Area3D" parent="InteractionZones" unique_id=1209249757]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 0)
+collision_layer = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="InteractionZones/ZoneCentre" unique_id=1118348462]
+shape = SubResource("BoxShape3D_pq6w6")
+
+[node name="NavRegion" type="NavigationRegion3D" parent="." unique_id=868564878]
+navigation_mesh = SubResource("NavigationMesh_bvkpq")
+
+[node name="UILayer" type="CanvasLayer" parent="." unique_id=1975825409]
+layer = 10
+
+[node name="DialogueBubbleContainer" type="Control" parent="UILayer" unique_id=1231911301]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="LocationLabel" type="Label" parent="UILayer" unique_id=320893213]
+offset_right = 40.0
+offset_bottom = 23.0
+text = "Location Name"
+
+[node name="WallNorth" type="StaticBody3D" parent="." unique_id=1854471363]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, -10)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="WallNorth" unique_id=1253795211]
+shape = SubResource("BoxShape3D_ud07r")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="WallNorth" unique_id=1708569309]
+mesh = SubResource("BoxMesh_brhhl")
+
+[node name="WallSouth" type="StaticBody3D" parent="." unique_id=144070993]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 10)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="WallSouth" unique_id=1114909575]
+shape = SubResource("BoxShape3D_ud07r")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="WallSouth" unique_id=799426576]
+mesh = SubResource("BoxMesh_brhhl")
+
+[node name="WallEast" type="StaticBody3D" parent="." unique_id=916137626]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 10, 1.5, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="WallEast" unique_id=716262152]
+shape = SubResource("BoxShape3D_ud07r")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="WallEast" unique_id=1680947606]
+mesh = SubResource("BoxMesh_brhhl")
+
+[node name="WallEast2" type="StaticBody3D" parent="." unique_id=1787011988]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -10, 1.5, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="WallEast2" unique_id=1514487151]
+shape = SubResource("BoxShape3D_ud07r")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="WallEast2" unique_id=1335683050]
+mesh = SubResource("BoxMesh_brhhl")
+
+[node name="Mochi" type="CharacterBody3D" parent="." unique_id=1864149794 groups=["cat"]]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3, 0.1, 0)
+script = ExtResource("2_brhhl")
+data = ExtResource("3_pq6w6")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Mochi" unique_id=1060204175]
+shape = SubResource("CapsuleShape3D_ud07r")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Mochi" unique_id=1076912787]
+mesh = SubResource("CapsuleMesh_brhhl")
+
+[node name="NavigationAgent3D" type="NavigationAgent3D" parent="Mochi" unique_id=461992176]
+
+[node name="Biscuit" type="CharacterBody3D" parent="." unique_id=584032348 groups=["cat"]]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 0.1, 0)
+script = ExtResource("2_brhhl")
+data = ExtResource("4_bvkpq")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Biscuit" unique_id=218357617]
+shape = SubResource("CapsuleShape3D_ud07r")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Biscuit" unique_id=1998396394]
+mesh = SubResource("CapsuleMesh_brhhl")
+
+[node name="NavigationAgent3D" type="NavigationAgent3D" parent="Biscuit" unique_id=75590631]
