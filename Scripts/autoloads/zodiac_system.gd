@@ -148,12 +148,17 @@ const COMPATIBILITY: Dictionary = {
 ## Apply zodiac trait caps and boosts to a CatData resource.
 ## Call once when a cat is first created or loaded.
 func apply_caps(data: CatData) -> void:
-	var sign: String = data.zodiac_sign
-	if not SIGNS.has(sign):
-		push_warning("[ZodiacSystem] Unknown sign '%s' on cat '%s'." % [sign, data.cat_name])
+	# Strip any accidental whitespace from the Inspector field.
+	data.zodiac_sign = data.zodiac_sign.strip_edges()
+	var zodiac_sign: String = data.zodiac_sign
+
+	if not SIGNS.has(zodiac_sign):
+		push_warning("[ZodiacSystem] Unknown sign '%s' on cat '%s'. Valid signs: %s" % [
+			zodiac_sign, data.cat_name, ", ".join(SIGNS.keys())
+		])
 		return
 
-	var sign_data: Dictionary = SIGNS[sign]
+	var sign_data: Dictionary = SIGNS[zodiac_sign]
 
 	# Apply caps.
 	var caps: Dictionary = sign_data.get("trait_caps", {})
@@ -174,10 +179,10 @@ func apply_caps(data: CatData) -> void:
 
 ## Returns the need decay multiplier for a given need on a given sign.
 ## 1.0 = normal rate. >1.0 = decays faster (needs it more). <1.0 = decays slower.
-func need_decay_mod(sign: String, need: String) -> float:
-	if not SIGNS.has(sign):
+func need_decay_mod(zodiac_sign: String, need: String) -> float:
+	if not SIGNS.has(zodiac_sign):
 		return 1.0
-	return SIGNS[sign].get("need_mod", {}).get(need, 1.0)
+	return SIGNS[zodiac_sign].get("need_mod", {}).get(need, 1.0)
 
 
 ## Returns the compatibility modifier between two signs (-0.3 to +0.3).
@@ -193,8 +198,8 @@ func are_compatible(sign_a: String, sign_b: String) -> bool:
 
 
 ## Returns the display description for a sign.
-func sign_description(sign: String) -> String:
-	return SIGNS.get(sign, {}).get("description", "")
+func sign_description(zodiac_sign: String) -> String:
+	return SIGNS.get(zodiac_sign, {}).get("description", "")
 
 
 ## Returns a random sign key.

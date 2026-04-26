@@ -46,8 +46,8 @@ const BASE_DECAY: Dictionary = {
 }
 
 # Crystallization thresholds
-const CRYSTAL_SPREAD_RATIO: float = 0.5	# 1 out of 2 cats = crystallizes
-const CRYSTAL_AVG_BELIEF:   float = 0.4	# lowered so test cats can trigger it
+const CRYSTAL_SPREAD_RATIO: float = 0.6  # was 0.5
+const CRYSTAL_AVG_BELIEF:   float = 0.6  # was 0.4
 const MIN_BELIEF_TO_SPREAD: float = 0.2	# lowered from 0.3
 const BASE_SPREAD_CHANCE:   float = 0.8	# raised from 0.35 — ensures spread with 2 cats
 

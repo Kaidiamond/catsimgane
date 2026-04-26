@@ -27,7 +27,6 @@ extends Node3D
 @onready var _interaction_zones: Node3D      = $InteractionZones
 @onready var _ui_layer: CanvasLayer          = $UILayer
 @onready var _location_label: Label          = $UILayer/LocationLabel
-@onready var _nav_region: NavigationRegion3D = $NavRegion
 
 # ── Runtime state ─────────────────────────────────────────────────────────────
 ## Key = cat_name (String), value = cat Node3D.
@@ -310,10 +309,13 @@ func _test_fire_day_tick() -> void:
 			"Add rumor_manager.gd in Project → Project Settings → Autoload.")
 		return
 
-	rm.daily_tick(get_cats(), get_location_map_slice())
+	# Decay needs and update mood on every cat before the rumor tick.
 	for cat in get_cats():
 		if cat.has_method("daily_tick"):
 			cat.daily_tick()
+
+	rm.daily_tick(get_cats(), get_location_map_slice())
+
 	print("[TestMode] 🕐 Day tick — active rumors: %d" % rm.active_rumors.size())
 	for r in rm.active_rumors:
 		print("   [%s] heat:%.2f  known_by:%d  crystallized:%s — %s" % [
@@ -322,19 +324,32 @@ func _test_fire_day_tick() -> void:
 
 
 func _test_build_overlay() -> void:
+	# Outer panel anchored to left side, fixed height.
+	var panel := PanelContainer.new()
+	panel.name           = "DebugPanel"
+	panel.anchor_left    = 0.0
+	panel.anchor_top     = 0.0
+	panel.anchor_right   = 0.0
+	panel.anchor_bottom  = 0.0
+	panel.offset_left    = 8.0
+	panel.offset_top     = 8.0
+	panel.offset_right   = 280.0
+	panel.offset_bottom  = 500.0
+	_ui_layer.add_child(panel)
+
+	var scroll := ScrollContainer.new()
+	scroll.name                              = "Scroll"
+	scroll.custom_minimum_size               = Vector2(260.0, 480.0)
+	scroll.horizontal_scroll_mode           = ScrollContainer.SCROLL_MODE_DISABLED
+	panel.add_child(scroll)
+
 	_debug_label              = RichTextLabel.new()
 	_debug_label.name         = "DebugOverlay"
 	_debug_label.bbcode_enabled = true
 	_debug_label.fit_content  = true
 	_debug_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	_debug_label.anchor_left   = 0.0
-	_debug_label.anchor_top    = 1.0
-	_debug_label.anchor_right  = 0.4
-	_debug_label.anchor_bottom = 1.0
-	_debug_label.offset_top    = -220.0
-	_debug_label.offset_bottom = -12.0
-	_debug_label.offset_left   = 12.0
-	_ui_layer.add_child(_debug_label)
+	_debug_label.custom_minimum_size = Vector2(240.0, 0.0)
+	scroll.add_child(_debug_label)
 
 
 func _test_update_overlay() -> void:
@@ -342,38 +357,68 @@ func _test_update_overlay() -> void:
 		return
 
 	var lines: PackedStringArray = PackedStringArray()
-	lines.append("[b][color=#40c8c8]cats[/color][/b]")
+	lines.append("[b][color=#40c8c8]── cats ──[/color][/b]")
 
 	for cname in cats_present:
-		var cat: Node3D    = cats_present[cname]
+		var cat: Node3D      = cats_present[cname]
 		var mood_val: float  = cat.get("mood") if cat.get("mood") != null else 0.0
 		var mood_str: String = cat.call("mood_label") if cat.has_method("mood_label") else "?"
 		var rep: float       = cat.get("reputation") if cat.get("reputation") != null else 0.0
+
+		# Header line.
 		lines.append("  [b]%s[/b]  %s  rep:%.0f" % [
 			cname, _test_mood_colored(mood_val, mood_str), rep
 		])
+
+		# Needs — read from cat.data if it's a CatBase, fall back gracefully.
+		var cat_data = cat.get("data") if "data" in cat else null
+		if cat_data != null and "needs" in cat_data:
+			var needs: Dictionary = cat_data.needs
+			for need in ["hunger", "sleep", "social", "fun", "expression", "belonging", "hygiene", "aspiration"]:
+				var val: float  = needs.get(need, 1.0)
+				var bar: String = _need_bar(val)
+				var color: String = "lime" if val > 0.5 else ("orange" if val > 0.25 else "tomato")
+				lines.append("    [color=#888]%s[/color] [color=%s]%s[/color] %.0f%%" % [
+					need.left(6).rpad(6), color, bar, val * 100.0
+				])
+
+			# Aspiration progress.
+			var asp_type: String     = cat_data.get("aspiration_type") if "aspiration_type" in cat_data else "?"
+			var asp_prog: float      = cat_data.get("aspiration_progress") if "aspiration_progress" in cat_data else 0.0
+			var zodiac: String       = cat_data.get("zodiac_sign") if "zodiac_sign" in cat_data else "?"
+			lines.append("    [color=#888]aspire[/color] [color=#c8a0ff]%s[/color] %.0f%%" % [asp_type, asp_prog * 100.0])
+			lines.append("    [color=#888]sign  [/color] [color=#a0c8ff]%s[/color]" % zodiac)
+
+		# Relationships.
 		for other in cats_present:
 			if other == cname:
 				continue
 			var score: float = cat.get_relationship_score(other) \
 				if cat.has_method("get_relationship_score") else 0.0
-			lines.append("    → %s : %.0f" % [other, score])
+			var rel_color: String = "lime" if score > 60 else ("orange" if score > 40 else "tomato")
+			lines.append("    [color=#888]↔[/color] %s [color=%s]%.0f[/color]" % [other, rel_color, score])
 
+		lines.append("")	# spacer between cats
+
+	# Rumors.
 	var rm: Node = get_node_or_null("/root/RumorManager")
 	if rm != null:
-		lines.append("[b][color=#40c8c8]rumors[/color][/b]")
+		lines.append("[b][color=#40c8c8]── rumors ──[/color][/b]")
 		if rm.active_rumors.is_empty():
-			lines.append("  [color=#888](none)[/color]")
+			lines.append("  [color=#888](none yet)[/color]")
 		for r in rm.active_rumors.slice(0, 5):
 			var star: String = " [color=gold]★[/color]" if r.crystallized else ""
 			lines.append("  [%s] heat:%.2f  known:%d%s" % [
 				r.type, r.heat, r.known_by.size(), star
 			])
 
-	lines.append("[color=#666]tick in %.1fs[/color]" % \
-		(test_day_tick_interval - _test_tick_timer))
-
+	lines.append("[color=#555]tick in %.1fs[/color]" % (test_day_tick_interval - _test_tick_timer))
 	_debug_label.text = "\n".join(lines)
+
+
+func _need_bar(val: float) -> String:
+	var filled: int = int(round(val * 8.0))
+	return "█".repeat(filled) + "░".repeat(8 - filled)
 
 
 func _test_mood_colored(val: float, label: String) -> String:
